@@ -1,0 +1,6 @@
+#Ignore the NES rom
+*.nes
+#Ignore the fns file
+*.fns
+#Ignore .deb files
+*.deb

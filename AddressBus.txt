@@ -1,0 +1,62 @@
+Memory Layout and Ports
+
+$0000 - $07FF: internal RAM
+	$0000 - $00FF: zero page
+	$0100 - $01FF: stack
+	$0200 - $02FF: DMA sprite data:
+	1 - Y Position - vertical position of the sprite on screen. $00 is the top of the screen. Anything above $EF is off the bottom of the screen.
+	2 - Tile Number - this is the tile number (0 to 256) for the graphic to be taken from a Pattern Table.
+	3 - Attributes - this byte holds color and displaying information:
+  	76543210
+	|||   ||
+	|||   ++- Color Palette of sprite.  Choose which set of 4 from the 16 colors to use
+	|||
+	||+------ Priority (0: in front of background; 1: behind background)
+	|+------- Flip sprite horizontally
+	+-------- Flip sprite vertically
+	4 - X Position - horizontal position on the screen. $00 is the left side, anything above $F9 is off screen.
+
+	The rest can be used for anything
+	
+$2000 - $2007: PPU ports
+	$2000: PPU config anytime
+	76543210
+	| ||||||
+	| ||||++- Base nametable address
+	| ||||    (0 = $2000; 1 = $2400; 2 = $2800; 3 = $2C00)
+	| |||+--- VRAM address increment per CPU read/write of PPUDATA
+	| |||     (0: increment by 1, going across; 1: increment by 32, going down)
+	| ||+---- Sprite pattern table address for 8x8 sprites (0: $0000; 1: $1000)
+	| |+----- Background pattern table address (0: $0000; 1: $1000)
+	| +------ Sprite size (0: 8x8; 1: 8x16)
+	|
+	+-------- Generate an NMI at the start of the
+        	  vertical blanking interval vblank (0: off; 1: on)
+	$2001: PPU config anytime
+	76543210
+	||||||||
+	|||||||+- Grayscale (0: normal color; 1: AND all palette entries
+	|||||||   with 0x30, effectively producing a monochrome display;
+	|||||||   note that colour emphasis STILL works when this is on!)
+	||||||+-- Disable background clipping in leftmost 8 pixels of screen
+	|||||+--- Disable sprite clipping in leftmost 8 pixels of screen
+	||||+---- Enable background rendering
+	|||+----- Enable sprite rendering
+	||+------ Intensify reds (and darken other colors)
+	|+------- Intensify greens (and darken other colors)
+	+-------- Intensify blues (and darken other colors)
+	$2002: something to do with PPU setup
+	$2003: set low byte and high byte to the starting adress of sprite data array
+	$2006: colour palette setup, feed high and low byte of $3F00 in the PPU memory
+	$2007: color palette setup, this is done 32 times in a row, first 16 bytes for background, last for sprites. Changes during the game goes to $3F10 - $3F30, this might be the adress to use during runtime
+
+$4000 - $4017: Controller and APU ports
+	$4014: set this every NMI with the high byte of the adress used for DMA, for some reason this is here and not among the other PPU ports
+	$4016: controller 1, 0: A, 1: B, 2: Select, 3: Start, 4: Up, 5: Down, 6: Left, 7: Right
+	$4017: controller 2, well same here, there has to be some sort of setup where you set the first byte
+
+$6000 - $8000: WRAM, the NES emulator tutorial states that the cart is $4020 - $FFFF
+
+$8000 - $FFFA: Cartridge ROM/PRG ROM
+	$C000 - ?: PRG code
+	$E000 - $E020: Some color palette for testing
