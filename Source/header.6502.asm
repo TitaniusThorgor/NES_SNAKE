@@ -129,3 +129,11 @@ fruitPos_Y				.rs 1
 
 ;snake inputs/buffer, takes up a lot of RAM, can still use an 8-bit indexer
 snakeInputs 		.rs (WALL_BOTTOM - WALL_TOP) * (WALL_RIGHT - WALL_LEFT) / 4
+
+
+
+
+;MISC
+colorSwap	.rs 1
+colorTemp	.rs 1
+colorTempTemp	.rs 1

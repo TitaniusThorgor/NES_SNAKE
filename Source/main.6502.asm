@@ -306,6 +306,27 @@ _namUpdateLoop:
 _afterNamUpdate:
 
 
+;MISC: Color Swapping with the Select button, can be done anytime since the button is never used elseware
+;The effects will be shown first after a frame: not noticable
+	LDX colorTemp
+	LDA colorTemp
+	CLC
+	ADC #$10
+	STA colorTempTemp
+
+	LDA $2002
+	LDA #$3F
+	STA $2006
+	LDA #$00
+	STA $2006
+_loadAlternatePalettsLoop:
+	LDA palette + $10, X
+	STA $2007
+	INX
+	CPX colorTempTemp
+	BNE _loadAlternatePalettsLoop
+
+
 ;PPU CLEAN UP
 	LDA #%10010000	;enable NMI, sprites from pattern table 0, background from pattern table 1
 	STA $2000
@@ -317,6 +338,7 @@ _afterNamUpdate:
 
 
 ;INPUT
+;A, B, Select, Start, Up, Down, Left, Right
 	LDA playerOneInput
 	STA playerOnePreviousInput
 	;latch buttons, prepare buttons to send out signals
@@ -354,6 +376,35 @@ _input2Loop:
 	STA playerOneReleased
 
 
+
+;MISC: Change palette wiht Select
+;This does not look to pretty, a face lift would help
+	LDA playerOnePressed
+	AND #%00100000
+	BEQ _afterPaletteSelect
+
+;increment the counter
+	LDX colorSwap
+	INX
+	STX colorSwap
+	CPX #$04		;number of palettes
+	BNE _afterColorSwap
+	LDA #$00
+	STA colorSwap
+_afterColorSwap:
+
+	LDX #$FF
+	LDA #$F0
+_colorSwapIndexLoop:
+	CLC
+	ADC #$10
+	INX
+	CPX colorSwap
+	BNE _colorSwapIndexLoop
+	STA colorTemp
+_afterPaletteSelect:
+
+
 ;end of NMI
 	LDA #$01
 	STA nmiDone
@@ -369,6 +420,11 @@ palette:
 	.incbin "persistant.pal"
 	;0 of the 4 colors in one pallete: beginning of the sprite table
 	.incbin "persistant.pal"
+
+;two other colors
+	.incbin "blue.pal"
+	.incbin "green.pal"
+	.incbin "red.pal"
 
 ;game background
 background:
