@@ -26,5 +26,5 @@ _setSnakeInputs:
 	BNE _setSnakeInputs
 
 ;amount of frames to move
-	LDA #$0C
+	LDA #$0A
 	STA snakeFramesToMove
