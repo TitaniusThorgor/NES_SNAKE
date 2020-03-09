@@ -511,10 +511,10 @@ _snakeTailEvaluated:
 	BNE _snakeAfterIncrease
 	;ElongationSounds
 
-	LDA #%00001111
+	LDA #%00001010
 	STA $400C		;Volume of the noise
 
-	LDA #%00000001
+	LDA #%0000011
 	STA $400E		;Type of noise (it's a random generator for the noise channel)
 
 	LDA #%1000000
