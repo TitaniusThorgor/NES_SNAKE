@@ -514,7 +514,7 @@ _snakeTailEvaluated:
 	LDA #%00001010
 	STA $400C		;Volume of the noise
 
-	LDA #%0000011
+	LDA #%0010000
 	STA $400E		;Type of noise (it's a random generator for the noise channel)
 
 	LDA #%1000000
