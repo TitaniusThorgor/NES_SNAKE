@@ -56,8 +56,8 @@ _gameIsNotPaused:
 
 	;snakeLastInput
 	;convert input to two bytes
-	LDA playerOneInput
 	;let's make this easy for us
+	LDA playerOneInput
 
 	CMP #%00001000
 	BNE _snakePersistantInputUpDone
@@ -100,7 +100,6 @@ _snakePersistantInputDone:
 	BNE _tickDone
 	JSR _tick
 _tickDone:
-;do things that need to be done every frame, such as updating sprites
 
 ;return from gamestate playing
 	RTS
@@ -199,7 +198,7 @@ _tick:
 	CMP snakeLastInput
 	BEQ _snakeStraight
 
-	;curvs
+	;curves
 	ASL A
 	ASL A
 	CLC
@@ -245,8 +244,6 @@ _snakeTickBeepDone:
 
 
 _snakeStraight:
-	LDA snakeInputs
-	AND #%00000011
 	CLC
 	ADC #SNAKE_CHR_BODY_ROW
 _snakeUpdateBody:
